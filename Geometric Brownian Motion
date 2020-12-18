@@ -1,0 +1,30 @@
+%Monte Carlo
+%ds = mu*S*dt + sigma * S * dW 
+
+npaths = 20000 %whatever you want
+nsteps = 200 % whatever you want 
+T = 1; dt = T/nsteps; t = 0:dt:T;
+
+%model parameters
+mu = 0.2; sigma = 0.4; S0 = 1;  %S0 is initial stock price.
+
+% X = log(S/S0) transform
+dX = (mu-0.5*sigma^2)*dt + sigma*randn(npaths,nsteps)*sqrt(dt);
+
+% Accumulate the increments
+X = [zeros(npaths,1) cumsum(dX,2)];
+
+% Transform to back, back to geometric Brownian motion
+S = S0*exp(X);
+plot(t, S(1:1000:end,:)) 
+
+
+
+
+
+
+
+
+
+
+
