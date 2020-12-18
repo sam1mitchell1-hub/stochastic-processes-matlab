@@ -1,0 +1,59 @@
+%ds = aplha*(mu - x) *dt + sigma* dW
+% this is where it gets a little complicated as you can no longer get rid of the need for a for loop
+% this is a mean reverting process which introduces a new parameter which is the strength of mean reversion, alpha. 
+
+npaths = 20000;
+nsteps = 200;
+T = 1; dt = T/nsteps; t = 0:dt:T;
+
+%this is a process that requires an intial value
+X0 = 0.4;
+
+%model parameters
+alpha = 1; sigma = 0.10; mu = 0.07; 
+
+
+%fill an array with the first value being the initial value of X0 and the rest full of zeros. 
+X = [X0 * ones(1,npaths); zeros(nsteps,npaths)];
+N = randn(nsteps,npaths); %corrent length of array of random numbers
+
+
+%the solution of the SDE is as follows 
+
+%X(t) = exp(-alpha*t)* X0 + mu(1 - exp(-alpha*t)) + sigma * integral between 0 and t( exp(-alpha(t - s )dW(s)
+%this distribution can be described by N(E0(X(t)), Var0(X(t))) 
+%E0 = exp(-alpha*t)* X0 + mu(1 - exp(-alpha*t))
+%Var0 = sigma * integral between 0 and t( exp(-alpha(t - s )dW(s)
+%Var0 = sigma^2/ 2* alpha * (1 - exp(-2* alpha *t))
+
+%change all the t to dt
+
+%split up the determinsitic and random parts just to make things a litter clearer
+
+%sdev = sigma*sqrt(dt); % plain E-M 
+sdev = sigma* sqrt((1-exp(-2*alpha*dt)) /(2*alpha)); %E-M with analytical moments this the sqrt of the analytical variance
+
+% Compute and accumulate the increments
+for i = 1:nsteps
+    %X(i+1,:) = X(i,:) + alpha*(mu-X(i,:))*dt + sdev*N(i,:); % plain Euler-Maruyama
+    X(i+1,:) = mu+(X(i,:)-mu)*exp(-alpha*dt) + sdev*N(i,:); % Euler-M. with a. m. this is taking the analytical expectation and variance 
+end
+
+plot(t,X(:,1:1000:end));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
