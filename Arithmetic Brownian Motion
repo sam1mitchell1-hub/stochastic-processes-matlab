@@ -1,0 +1,28 @@
+%% Monte Carlo ABM
+
+npaths = 2000; %whatever you need 
+nsteps = 200; %whatever you need
+T = 1; dt = T/nsteps; t = 0:dt:T; % the same 
+
+define your model parameters
+mu = 0.05; sigma = 0.4;
+
+%dont need a for loop for Euler-Maruyama for this as can be done with all array opertations as sigma and mu are independent of t. 
+
+Compute the increments with Euler-Maruyama
+dX = mu*dt + sigma*randn(npaths,nsteps)*sqrt(dt);
+
+% Accumulate the increments
+X = [zeros(npaths,1) cumsum(dX,2)];
+
+plot(t,X(1:1000:end,:)) 
+
+
+
+
+
+
+
+
+
+
